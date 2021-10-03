@@ -1,5 +1,7 @@
 import * as core from "@actions/core";
 
+import { executeSyft } from "./sbom";
+
 async function run(): Promise<void> {
 	try {
 		const name = core.getInput("image");
@@ -9,6 +11,7 @@ async function run(): Promise<void> {
 		const c = await dc.getImage(name);
 		console.log(await c.inspect());
 		console.log(await c.history());
+		console.log(await executeSyft(name));
 	} catch (error) {
 		core.setFailed(error.message);
 	}
