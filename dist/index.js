@@ -35653,7 +35653,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __nccwpck_require__(2186);
 async function run() {
     try {
-        const name = core.getInput("name");
+        const name = core.getInput("image");
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const Docker = __nccwpck_require__(4571);
         const dc = new Docker();

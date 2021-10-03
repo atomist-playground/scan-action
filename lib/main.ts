@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 
 async function run(): Promise<void> {
 	try {
-		const name = core.getInput("name");
+		const name = core.getInput("image");
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const Docker = require("dockerode");
 		const dc = new Docker();
