@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import * as fs from "fs-extra";
 import * as util from "util";
 import * as zlib from "zlib";
 
@@ -21,6 +22,7 @@ async function run(): Promise<void> {
 				inspect,
 				history,
 				sbom,
+				event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
 			}),
 		);
 
