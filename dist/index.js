@@ -7,12 +7,12 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getSyftCommand = exports.downloadSyft = exports.SYFT_VERSION = exports.SYFT_BINARY_NAME = exports.executeSyft = void 0;
+exports.getSyftCommand = exports.downloadSyft = exports.SYFT_VERSION = exports.SYFT_BINARY_NAME = exports.createSbom = void 0;
 const core = __nccwpck_require__(2186);
 const exec = __nccwpck_require__(1514);
 const cache = __nccwpck_require__(7784);
 const stream = __nccwpck_require__(2413);
-async function executeSyft(image) {
+async function createSbom(image) {
     let stdout = "";
     const cmd = await getSyftCommand();
     const env = {
@@ -48,7 +48,7 @@ async function executeSyft(image) {
         return stdout;
     }
 }
-exports.executeSyft = executeSyft;
+exports.createSbom = createSbom;
 exports.SYFT_BINARY_NAME = "syft";
 exports.SYFT_VERSION = "v0.21.0";
 /**
@@ -40490,6 +40490,8 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __nccwpck_require__(2186);
+const util = __nccwpck_require__(1669);
+const zlib = __nccwpck_require__(8761);
 const sbom_1 = __nccwpck_require__(6228);
 async function run() {
     try {
@@ -40498,13 +40500,22 @@ async function run() {
         const Docker = __nccwpck_require__(4571);
         const dc = new Docker();
         const c = await dc.getImage(name);
-        console.log(await c.inspect());
-        console.log(await c.history());
-        console.log(await (0, sbom_1.executeSyft)(name));
+        const inspect = await c.inspect();
+        const history = await c.history();
+        const sbom = await (0, sbom_1.createSbom)(name);
+        const payload = await compress(JSON.stringify({
+            inspect,
+            history,
+            sbom,
+        }));
+        core.debug(payload);
     }
     catch (error) {
         core.setFailed(error.message);
     }
+}
+async function compress(value) {
+    return (await util.promisify(zlib.deflate)(value)).toString("base64");
 }
 void run();
 //# sourceMappingURL=main.js.map

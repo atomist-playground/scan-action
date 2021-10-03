@@ -3,7 +3,7 @@ import * as exec from "@actions/exec";
 import * as cache from "@actions/tool-cache";
 import * as stream from "stream";
 
-export async function executeSyft(image: string): Promise<string> {
+export async function createSbom(image: string): Promise<string> {
 	let stdout = "";
 
 	const cmd = await getSyftCommand();

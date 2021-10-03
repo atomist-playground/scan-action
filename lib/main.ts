@@ -1,6 +1,8 @@
 import * as core from "@actions/core";
+import * as util from "util";
+import * as zlib from "zlib";
 
-import { executeSyft } from "./sbom";
+import { createSbom } from "./sbom";
 
 async function run(): Promise<void> {
 	try {
@@ -9,12 +11,27 @@ async function run(): Promise<void> {
 		const Docker = require("dockerode");
 		const dc = new Docker();
 		const c = await dc.getImage(name);
-		console.log(await c.inspect());
-		console.log(await c.history());
-		console.log(await executeSyft(name));
+
+		const inspect = await c.inspect();
+		const history = await c.history();
+		const sbom = await createSbom(name);
+
+		const payload = await compress(
+			JSON.stringify({
+				inspect,
+				history,
+				sbom,
+			}),
+		);
+
+		core.debug(payload);
 	} catch (error) {
 		core.setFailed(error.message);
 	}
+}
+
+async function compress(value: string): Promise<string> {
+	return (await util.promisify(zlib.deflate)(value)).toString("base64");
 }
 
 void run();
