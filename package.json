@@ -1,43 +1,68 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "@atomist/scan-action",
+  "version": "0.1.0",
   "private": true,
-  "description": "TypeScript template action",
   "main": "lib/main.js",
   "scripts": {
-    "build": "tsc",
-    "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts",
-    "lint": "eslint src/**/*.ts",
+    "atm:lint:eslint": "eslint --fix",
+    "atm:lint:prettier": "prettier --write",
+    "lint": "run-p lint:eslint lint:prettier",
+    "lint:eslint": "eslint --ext .ts .",
+    "lint:eslint:fix": "npm run lint:eslint -- --fix",
+    "lint:fix": "run-p lint:eslint:fix lint:prettier:fix",
+    "lint:prettier": "prettier --list-different \"**/*.{graphql,json,markdown,md,yaml,yml}\"",
+    "lint:prettier:fix": "prettier --write \"**/*.{graphql,json,markdown,md,yaml,yml}\"",
+    "compile": "run-s compile:ts",
+    "compile:ts": "tsc --project .",
     "package": "ncc build --source-map --license licenses.txt",
-    "test": "jest",
-    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
+    "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
+    "all": "npm run compile && npm run lint && npm run package && npm test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/atomist-skills/scan-action.git"
   },
-  "keywords": [
-    "actions",
-    "node",
-    "setup"
-  ],
-  "author": "",
-  "license": "MIT",
+  "author": "Atomist, Inc.",
+  "license": "Apache-2.0",
   "dependencies": {
-    "@actions/core": "^1.4.0"
+    "@actions/core": "^1.4.0",
+    "dockernode": "^0.1.0"
   },
   "devDependencies": {
-    "@types/node": "^16.3.3",
-    "@typescript-eslint/parser": "^4.28.3",
-    "@vercel/ncc": "^0.29.0",
-    "eslint": "^7.31.0",
-    "eslint-plugin-github": "^4.1.1",
-    "eslint-plugin-jest": "^24.3.6",
-    "jest": "^27.0.6",
-    "js-yaml": "^4.1.0",
-    "prettier": "2.2.1",
-    "ts-jest": "^27.0.3",
-    "typescript": "^4.1.3"
+    "@types/fs-extra": "^9.0.13",
+    "@types/mocha": "^8.2.3",
+    "@types/power-assert": "^1.5.5",
+    "@types/semver": "^7.3.8",
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
+    "@typescript-eslint/parser": "^4.32.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-deprecation": "^1.2.1",
+    "eslint-plugin-prettier": "^3.4.1",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-unused-imports": "^1.1.5",
+    "espower-typescript": "^10.0.0",
+    "husky": "^4.3.5",
+    "lint-staged": "^11.1.2",
+    "mocha": "^9.1.2",
+    "npm-run-all": "^4.1.5",
+    "power-assert": "^1.6.1",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "supervisor": "^0.12.0",
+    "ts-node": "^10.2.1",
+    "typedoc": "^0.22.5",
+    "typescript": "^4.4.3",
+    "@vercel/ncc": "^0.29.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.@(graphql|json|markdown|yaml|yml|md)": "npm run atm:lint:prettier",
+    "**/*.ts": "npm run atm:lint:eslint"
   }
 }

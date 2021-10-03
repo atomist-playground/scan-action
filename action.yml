@@ -1,11 +1,10 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: "Container Scan"
+description: "Scan image for vulnerabilities"
+author: "Atomist, Inc."
 inputs:
-  milliseconds: # change this
+  image:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: "Name of image including repository and tag"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node14"
+  main: "dist/index.js"
