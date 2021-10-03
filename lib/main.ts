@@ -24,7 +24,7 @@ async function run(): Promise<void> {
 			}),
 		);
 
-		core.debug(payload);
+		console.log(payload);
 	} catch (error) {
 		core.setFailed(error.message);
 	}

@@ -40508,7 +40508,7 @@ async function run() {
             history,
             sbom,
         }));
-        core.debug(payload);
+        console.log(payload);
     }
     catch (error) {
         core.setFailed(error.message);
