@@ -14,15 +14,13 @@ export async function createSbom(image: string): Promise<string> {
 
 	const args = [image, "-o", "json"];
 
-	core.info(`[command]${cmd} ${args.join(" ")}`);
-
 	const outStream = new stream.Writable({
 		write(buffer, encoding, next) {
 			next();
 		},
 	});
 
-	const exitCode = await core.group("Executing Syft...", async () =>
+	const exitCode = await core.group("Cataloging image", async () =>
 		exec.exec(cmd, args, {
 			env,
 			outStream,
@@ -51,16 +49,11 @@ export async function createSbom(image: string): Promise<string> {
 export const SYFT_BINARY_NAME = "syft";
 export const SYFT_VERSION = "v0.21.0";
 
-/**
- * Downloads the appropriate Syft binary for the platform
- */
 export async function downloadSyft(): Promise<string> {
 	const name = SYFT_BINARY_NAME;
 	const version = SYFT_VERSION;
 
 	const url = `https://raw.githubusercontent.com/anchore/${name}/main/install.sh`;
-
-	core.debug(`Installing ${name} ${version}`);
 
 	// Download the installer, and run
 	const installPath = await cache.downloadTool(url);
@@ -74,9 +67,6 @@ export async function downloadSyft(): Promise<string> {
 	return `${installPath}_${name}/${name}`;
 }
 
-/**
- * Gets the Syft command to run via exec
- */
 export async function getSyftCommand(): Promise<string> {
 	const name = SYFT_BINARY_NAME;
 	const version = SYFT_VERSION;
@@ -89,8 +79,6 @@ export async function getSyftCommand(): Promise<string> {
 		// Cache the downloaded file
 		syftPath = await cache.cacheFile(syftPath, name, name, version);
 	}
-
-	core.debug(`Got Syft path: ${syftPath} binary at: ${syftPath}/${name}`);
 
 	// Add tool to path for this and future actions to use
 	core.addPath(syftPath);
