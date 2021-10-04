@@ -16,7 +16,7 @@ inputs:
     description: "Path to the Dockerfile used during build"
     default: Dockerfile
   token:
-    description: "Token for the repository. Can be passed in using `${{ secrets.GITHUB_TOKEN }}`."
+    description: "Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`."
     required: false
     default: ${{ github.token }}
 runs:
