@@ -16,15 +16,14 @@ async function run(): Promise<void> {
 		const url = core.getInput("url");
 		const token = core.getInput("token");
 		const dockerfile = core.getInput("dockerfile");
-		const slug = process.env.GITHUB_REPOSITORY;
 
 		const octokit = github.getOctokit(token);
 		const file = (
 			await octokit.rest.repos.getContent({
-				repo: slug.split("/")[1],
-				owner: slug.split("/")[0],
+				repo: github.context.repo.repo,
+				owner: github.context.repo.owner,
 				path: dockerfile,
-				ref: process.env.GITHUB_SHA,
+				ref: github.context.sha,
 			})
 		).data as any;
 
