@@ -55,7 +55,6 @@ export async function downloadSyft(): Promise<string> {
 
 	const url = `https://raw.githubusercontent.com/anchore/${name}/main/install.sh`;
 
-	// Download the installer, and run
 	const installPath = await cache.downloadTool(url);
 
 	const outStream = new stream.Writable({
@@ -64,11 +63,9 @@ export async function downloadSyft(): Promise<string> {
 		},
 	});
 
-	// Make sure the tool's executable bit is set
 	await exec.exec(`chmod +x ${installPath}`, [], {
 		outStream,
 	});
-
 	const cmd = `${installPath} -b ${installPath}_${name} ${version}`;
 	await exec.exec(cmd, [], {
 		outStream,
@@ -83,14 +80,10 @@ export async function getSyftCommand(): Promise<string> {
 
 	let syftPath = cache.find(name, version);
 	if (!syftPath) {
-		// Not found; download and install it; returns a path to the binary
 		syftPath = await downloadSyft();
-
-		// Cache the downloaded file
 		syftPath = await cache.cacheFile(syftPath, name, name, version);
 	}
 
-	// Add tool to path for this and future actions to use
 	core.addPath(syftPath);
 	return name;
 }
