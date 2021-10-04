@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import * as github from "@actions/github";
 import * as fs from "fs-extra";
 import fetch from "node-fetch";
 import * as util from "util";
@@ -14,6 +15,19 @@ async function run(): Promise<void> {
 		const name = core.getInput("image");
 		const url = core.getInput("url");
 		const tags = core.getInput("tags");
+		const token = core.getInput("token");
+		const dockerfile = core.getInput("dockerfile");
+		const slug = process.env.GITHUB_REPOSITORY;
+
+		const octokit = github.getOctokit(token);
+		const file = (
+			await octokit.rest.repos.getContent({
+				repo: slug.split("/")[1],
+				owner: slug.split("/")[0],
+				path: dockerfile,
+				ref: process.env.GITHUB_SHA,
+			})
+		).data as any;
 
 		const payload = await compress(
 			JSON.stringify({
@@ -21,7 +35,7 @@ async function run(): Promise<void> {
 				history: JSON.parse(await config(name)),
 				sbom: JSON.parse(await createSbom(name)),
 				event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
-				path: "Dockerfile",
+				file: { path: file.path, sha: file.sha },
 				tags,
 			}),
 		);
