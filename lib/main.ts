@@ -13,7 +13,7 @@ async function run(): Promise<void> {
 
 		const name = core.getInput("image");
 		const url = core.getInput("url");
-		//const tags = core.getInput("tags");
+		const tags = core.getInput("tags");
 
 		const payload = await compress(
 			JSON.stringify({
@@ -22,6 +22,7 @@ async function run(): Promise<void> {
 				sbom: JSON.parse(await createSbom(name)),
 				event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
 				path: "Dockerfile",
+				tags,
 			}),
 		);
 
