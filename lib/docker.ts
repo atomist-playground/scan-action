@@ -19,21 +19,23 @@ export async function inspect(image: string): Promise<string> {
 		},
 	});
 
-	const exitCode = await core.group("Cataloging image", async () =>
-		exec.exec(cmd, args, {
-			outStream,
-			listeners: {
-				stdout(buffer) {
-					stdout += buffer.toString();
+	const exitCode = await core.group(
+		"Retrieving Docker image details",
+		async () =>
+			exec.exec(cmd, args, {
+				outStream,
+				listeners: {
+					stdout(buffer) {
+						stdout += buffer.toString();
+					},
+					stderr(buffer) {
+						core.info(buffer.toString());
+					},
+					debug(message) {
+						core.debug(message);
+					},
 				},
-				stderr(buffer) {
-					core.info(buffer.toString());
-				},
-				debug(message) {
-					core.debug(message);
-				},
-			},
-		}),
+			}),
 	);
 
 	if (exitCode > 0) {
@@ -56,21 +58,23 @@ export async function config(image: string): Promise<string> {
 		},
 	});
 
-	const exitCode = await core.group("Cataloging image", async () =>
-		exec.exec(cmd, args, {
-			outStream,
-			listeners: {
-				stdout(buffer) {
-					stdout += buffer.toString();
+	const exitCode = await core.group(
+		"Retrieving Docker image history",
+		async () =>
+			exec.exec(cmd, args, {
+				outStream,
+				listeners: {
+					stdout(buffer) {
+						stdout += buffer.toString();
+					},
+					stderr(buffer) {
+						core.info(buffer.toString());
+					},
+					debug(message) {
+						core.debug(message);
+					},
 				},
-				stderr(buffer) {
-					core.info(buffer.toString());
-				},
-				debug(message) {
-					core.debug(message);
-				},
-			},
-		}),
+			}),
 	);
 
 	if (exitCode > 0) {

@@ -20,7 +20,7 @@ export async function createSbom(image: string): Promise<string> {
 		},
 	});
 
-	const exitCode = await core.group("Cataloging image", async () =>
+	const exitCode = await core.group("Creating Docker image SBOM", async () =>
 		exec.exec(cmd, args, {
 			env,
 			outStream,

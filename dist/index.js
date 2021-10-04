@@ -25,7 +25,7 @@ async function inspect(image) {
             next();
         },
     });
-    const exitCode = await core.group("Cataloging image", async () => exec.exec(cmd, args, {
+    const exitCode = await core.group("Retrieving Docker image details", async () => exec.exec(cmd, args, {
         outStream,
         listeners: {
             stdout(buffer) {
@@ -57,7 +57,7 @@ async function config(image) {
             next();
         },
     });
-    const exitCode = await core.group("Cataloging image", async () => exec.exec(cmd, args, {
+    const exitCode = await core.group("Retrieving Docker image history", async () => exec.exec(cmd, args, {
         outStream,
         listeners: {
             stdout(buffer) {
@@ -107,7 +107,7 @@ async function createSbom(image) {
             next();
         },
     });
-    const exitCode = await core.group("Cataloging image", async () => exec.exec(cmd, args, {
+    const exitCode = await core.group("Creating Docker image SBOM", async () => exec.exec(cmd, args, {
         env,
         outStream,
         listeners: {
