@@ -139,10 +139,19 @@ async function downloadSyft() {
     const url = `https://raw.githubusercontent.com/anchore/${name}/main/install.sh`;
     // Download the installer, and run
     const installPath = await cache.downloadTool(url);
+    const outStream = new stream.Writable({
+        write(buffer, encoding, next) {
+            next();
+        },
+    });
     // Make sure the tool's executable bit is set
-    await exec.exec(`chmod +x ${installPath}`);
+    await exec.exec(`chmod +x ${installPath}`, [], {
+        outStream,
+    });
     const cmd = `${installPath} -b ${installPath}_${name} ${version}`;
-    await exec.exec(cmd);
+    await exec.exec(cmd, [], {
+        outStream,
+    });
     return `${installPath}_${name}/${name}`;
 }
 exports.downloadSyft = downloadSyft;
@@ -21484,7 +21493,6 @@ const docker_1 = __nccwpck_require__(3758);
 const sbom_1 = __nccwpck_require__(6228);
 async function run() {
     try {
-        // await installSkopeo();
         const name = core.getInput("image") || core.getInput("tags"); // TODO cd only take the first tag
         const url = core.getInput("url");
         const token = core.getInput("token");
@@ -21504,7 +21512,6 @@ async function run() {
             file: { path: file.path, sha: file.sha },
             tags: core.getInput("tags"),
         }));
-        console.log(payload);
         await (0, node_fetch_1.default)(url, { method: "post", compress: true, body: payload });
     }
     catch (error) {

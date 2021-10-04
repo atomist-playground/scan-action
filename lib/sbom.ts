@@ -58,11 +58,21 @@ export async function downloadSyft(): Promise<string> {
 	// Download the installer, and run
 	const installPath = await cache.downloadTool(url);
 
+	const outStream = new stream.Writable({
+		write(buffer, encoding, next) {
+			next();
+		},
+	});
+
 	// Make sure the tool's executable bit is set
-	await exec.exec(`chmod +x ${installPath}`);
+	await exec.exec(`chmod +x ${installPath}`, [], {
+		outStream,
+	});
 
 	const cmd = `${installPath} -b ${installPath}_${name} ${version}`;
-	await exec.exec(cmd);
+	await exec.exec(cmd, [], {
+		outStream,
+	});
 
 	return `${installPath}_${name}/${name}`;
 }

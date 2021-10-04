@@ -10,8 +10,6 @@ import { createSbom } from "./sbom";
 
 async function run(): Promise<void> {
 	try {
-		// await installSkopeo();
-
 		const name = core.getInput("image") || core.getInput("tags"); // TODO cd only take the first tag
 		const url = core.getInput("url");
 		const token = core.getInput("token");
@@ -37,8 +35,6 @@ async function run(): Promise<void> {
 				tags: core.getInput("tags"),
 			}),
 		);
-
-		console.log(payload);
 
 		await fetch(url, { method: "post", compress: true, body: payload });
 	} catch (error) {
