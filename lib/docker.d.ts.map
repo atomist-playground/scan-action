@@ -1,1 +1,1 @@
-{"version":3,"file":"docker.d.ts","sourceRoot":"","sources":["docker.ts"],"names":[],"mappings":"AAEA,wBAAsB,aAAa,IAAI,OAAO,CAAC,IAAI,CAAC,CAGnD"}
+{"version":3,"file":"docker.d.ts","sourceRoot":"","sources":["docker.ts"],"names":[],"mappings":"AAIA,wBAAsB,aAAa,IAAI,OAAO,CAAC,IAAI,CAAC,CAGnD;AAED,wBAAsB,OAAO,CAAC,KAAK,EAAE,MAAM,GAAG,OAAO,CAAC,MAAM,CAAC,CAmC5D;AAED,wBAAsB,MAAM,CAAC,KAAK,EAAE,MAAM,GAAG,OAAO,CAAC,MAAM,CAAC,CAmC3D"}

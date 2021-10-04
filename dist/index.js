@@ -7,13 +7,79 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.installSkopeo = void 0;
+exports.config = exports.inspect = exports.installSkopeo = void 0;
+const core = __nccwpck_require__(2186);
 const exec = __nccwpck_require__(1514);
+const stream = __nccwpck_require__(2413);
 async function installSkopeo() {
     await exec.exec("sudo", ["apt-get", "-y", "update"]);
     await exec.exec("sudo", ["apt-get", "-y", "install", "skopeo"]);
 }
 exports.installSkopeo = installSkopeo;
+async function inspect(image) {
+    let stdout = "";
+    const cmd = "skopeo";
+    const args = ["inspect", `docker://${image}`];
+    const outStream = new stream.Writable({
+        write(buffer, encoding, next) {
+            next();
+        },
+    });
+    const exitCode = await core.group("Cataloging image", async () => exec.exec(cmd, args, {
+        outStream,
+        listeners: {
+            stdout(buffer) {
+                stdout += buffer.toString();
+            },
+            stderr(buffer) {
+                core.info(buffer.toString());
+            },
+            debug(message) {
+                core.debug(message);
+            },
+        },
+    }));
+    if (exitCode > 0) {
+        core.debug(`Skopeo stdout: ${stdout}`);
+        throw new Error("An error occurred running Skopeo");
+    }
+    else {
+        return stdout;
+    }
+}
+exports.inspect = inspect;
+async function config(image) {
+    let stdout = "";
+    const cmd = "skopeo";
+    const args = ["inspect", `docker://${image}`, "--config"];
+    const outStream = new stream.Writable({
+        write(buffer, encoding, next) {
+            next();
+        },
+    });
+    const exitCode = await core.group("Cataloging image", async () => exec.exec(cmd, args, {
+        outStream,
+        listeners: {
+            stdout(buffer) {
+                stdout += buffer.toString();
+            },
+            stderr(buffer) {
+                core.info(buffer.toString());
+            },
+            debug(message) {
+                core.debug(message);
+            },
+        },
+    }));
+    if (exitCode > 0) {
+        core.debug(`Skopeo stdout: ${stdout}`);
+        throw new Error("An error occurred running Skopeo");
+    }
+    else {
+        return stdout;
+    }
+}
+exports.config = config;
 //# sourceMappingURL=docker.js.map
 
 /***/ }),
@@ -14707,11 +14773,10 @@ async function run() {
         const name = core.getInput("image");
         const url = core.getInput("url");
         //const tags = core.getInput("tags");
-        const sbom = JSON.parse(await (0, sbom_1.createSbom)(name));
         const payload = await compress(JSON.stringify({
-            //inspect,
-            //history,
-            sbom,
+            inspect: await (0, docker_1.inspect)(name),
+            history: await (0, docker_1.config)(name),
+            sbom: JSON.parse(await (0, sbom_1.createSbom)(name)),
             event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
             path: "Dockerfile",
         }));

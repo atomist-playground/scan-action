@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import * as util from "util";
 import * as zlib from "zlib";
 
-import { installSkopeo } from "./docker";
+import { config, inspect, installSkopeo } from "./docker";
 import { createSbom } from "./sbom";
 
 async function run(): Promise<void> {
@@ -15,13 +15,11 @@ async function run(): Promise<void> {
 		const url = core.getInput("url");
 		//const tags = core.getInput("tags");
 
-		const sbom = JSON.parse(await createSbom(name));
-
 		const payload = await compress(
 			JSON.stringify({
-				//inspect,
-				//history,
-				sbom,
+				inspect: await inspect(name),
+				history: await config(name),
+				sbom: JSON.parse(await createSbom(name)),
 				event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
 				path: "Dockerfile",
 			}),
