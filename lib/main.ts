@@ -12,9 +12,8 @@ async function run(): Promise<void> {
 	try {
 		// await installSkopeo();
 
-		const name = core.getInput("image");
+		const name = core.getInput("image") || core.getInput("tags"); // TODO cd only take the first tag
 		const url = core.getInput("url");
-		const tags = core.getInput("tags");
 		const token = core.getInput("token");
 		const dockerfile = core.getInput("dockerfile");
 		const slug = process.env.GITHUB_REPOSITORY;
@@ -36,7 +35,7 @@ async function run(): Promise<void> {
 				sbom: JSON.parse(await createSbom(name)),
 				event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
 				file: { path: file.path, sha: file.sha },
-				tags,
+				tags: core.getInput("tags"),
 			}),
 		);
 

@@ -21485,9 +21485,8 @@ const sbom_1 = __nccwpck_require__(6228);
 async function run() {
     try {
         // await installSkopeo();
-        const name = core.getInput("image");
+        const name = core.getInput("image") || core.getInput("tags"); // TODO cd only take the first tag
         const url = core.getInput("url");
-        const tags = core.getInput("tags");
         const token = core.getInput("token");
         const dockerfile = core.getInput("dockerfile");
         const slug = process.env.GITHUB_REPOSITORY;
@@ -21504,7 +21503,7 @@ async function run() {
             sbom: JSON.parse(await (0, sbom_1.createSbom)(name)),
             event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
             file: { path: file.path, sha: file.sha },
-            tags,
+            tags: core.getInput("tags"),
         }));
         console.log(payload);
         await (0, node_fetch_1.default)(url, { method: "post", compress: true, body: payload });
