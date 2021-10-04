@@ -10,6 +10,8 @@ async function run(): Promise<void> {
 	try {
 		const name = core.getInput("image");
 		const url = core.getInput("url");
+		const tags = core.getInput("tags");
+		console.log(tags);
 
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const Docker = require("dockerode");

@@ -49679,6 +49679,8 @@ async function run() {
     try {
         const name = core.getInput("image");
         const url = core.getInput("url");
+        const tags = core.getInput("tags");
+        console.log(tags);
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const Docker = __nccwpck_require__(4571);
         const dc = new Docker();

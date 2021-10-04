@@ -4,7 +4,13 @@ author: "Atomist, Inc."
 inputs:
   image:
     required: true
-    description: "Name of image including repository and tag"
+    description: "Docker image name"
+  tags:
+    required: false
+    description: "Docker image tags"
+  url:
+    required: true
+    description: "Webhook url"
 runs:
   using: "node12"
   main: "dist/index.js"
