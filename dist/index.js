@@ -49694,6 +49694,7 @@ async function run() {
             event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
             path: "Dockerfile",
         }));
+        console.log(payload);
         await (0, node_fetch_1.default)(url, { method: "post", compress: true, body: payload });
     }
     catch (error) {

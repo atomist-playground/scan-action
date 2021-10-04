@@ -31,6 +31,8 @@ async function run(): Promise<void> {
 			}),
 		);
 
+		console.log(payload);
+
 		await fetch(url, { method: "post", compress: true, body: payload });
 	} catch (error) {
 		core.setFailed(error.message);
