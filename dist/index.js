@@ -14769,13 +14769,13 @@ const docker_1 = __nccwpck_require__(3758);
 const sbom_1 = __nccwpck_require__(6228);
 async function run() {
     try {
-        await (0, docker_1.installSkopeo)();
+        // await installSkopeo();
         const name = core.getInput("image");
         const url = core.getInput("url");
         //const tags = core.getInput("tags");
         const payload = await compress(JSON.stringify({
-            inspect: await (0, docker_1.inspect)(name),
-            history: await (0, docker_1.config)(name),
+            inspect: JSON.parse(await (0, docker_1.inspect)(name)),
+            history: JSON.parse(await (0, docker_1.config)(name)),
             sbom: JSON.parse(await (0, sbom_1.createSbom)(name)),
             event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
             path: "Dockerfile",
