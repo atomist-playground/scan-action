@@ -49679,8 +49679,7 @@ async function run() {
     try {
         const name = core.getInput("image");
         const url = core.getInput("url");
-        const tags = core.getInput("tags");
-        console.log(tags);
+        //const tags = core.getInput("tags");
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const Docker = __nccwpck_require__(4571);
         const dc = new Docker();
@@ -49692,7 +49691,8 @@ async function run() {
             inspect,
             history,
             sbom,
-            event: fs.readJson(process.env.GITHUB_EVENT_PATH),
+            event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
+            path: "Dockerfile",
         }));
         await (0, node_fetch_1.default)(url, { method: "post", compress: true, body: payload });
     }
