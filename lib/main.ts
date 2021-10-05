@@ -7,10 +7,11 @@ import * as zlib from "zlib";
 
 import { config, inspect } from "./docker";
 import { createSbom } from "./sbom";
+import { getInputList } from "./util";
 
 async function run(): Promise<void> {
 	try {
-		const name = core.getInput("image") || core.getInput("tags"); // TODO cd only take the first tag
+		const tags = await getInputList("tags");
 		const url = core.getInput("url");
 		const token = core.getInput("token");
 		const dockerfile = core.getInput("dockerfile");
@@ -27,12 +28,12 @@ async function run(): Promise<void> {
 
 		const payload = await compress(
 			JSON.stringify({
-				inspect: JSON.parse(await inspect(name)),
-				history: JSON.parse(await config(name)),
-				sbom: JSON.parse(await createSbom(name)),
+				inspect: JSON.parse(await inspect(tags[0])),
+				history: JSON.parse(await config(tags[0])),
+				sbom: JSON.parse(await createSbom(tags[0])),
 				event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
 				file: { path: file.path, sha: file.sha },
-				tags: core.getInput("tags"),
+				tags,
 			}),
 		);
 

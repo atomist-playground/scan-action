@@ -30,7 +30,9 @@
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0",
     "@actions/tool-cache": "^1.7.1",
+    "@types/csv-parse": "^1.2.2",
     "@types/node-fetch": "^3.0.3",
+    "csv-parse": "^4.16.3",
     "fs-extra": "^10.0.0",
     "node-fetch": "^3.0.0"
   },

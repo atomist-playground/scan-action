@@ -2,9 +2,6 @@ name: "Container Scan"
 description: "Scan image for vulnerabilities"
 author: "Atomist, Inc."
 inputs:
-  image:
-    required: false
-    description: "Docker image name"
   tags:
     required: false
     description: "Docker image tags"
