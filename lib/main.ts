@@ -1,9 +1,12 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import * as fs from "fs-extra";
 import fetch from "node-fetch";
 import * as util from "util";
 import * as zlib from "zlib";
 
+import { config, inspect } from "./docker";
+import { createSbom } from "./sbom";
 import { getInputList } from "./util";
 
 async function run(): Promise<void> {
@@ -25,10 +28,10 @@ async function run(): Promise<void> {
 
 		const payload = await compress(
 			JSON.stringify({
-				//inspect: JSON.parse(await inspect(tags[0])),
-				//history: JSON.parse(await config(tags[0])),
-				//sbom: JSON.parse(await createSbom(tags[0])),
-				//event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
+				inspect: JSON.parse(await inspect(tags[0])),
+				history: JSON.parse(await config(tags[0])),
+				sbom: JSON.parse(await createSbom(tags[0])),
+				event: await fs.readJson(process.env.GITHUB_EVENT_PATH),
 				file: { path: file.path, sha: file.sha },
 				tags,
 			}),
