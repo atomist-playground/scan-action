@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const csvparse = require("csv-parse");
+const csvparse = require("csv-parse/lib/sync");
 
 export async function getInputList(
 	name: string,
@@ -10,16 +10,18 @@ export async function getInputList(
 	const res: Array<string> = [];
 
 	const items = core.getInput(name);
-	if (items == "") {
+	if (items === "") {
 		return res;
 	}
 
-	for (const output of (await csvparse(items, {
+	const parsed = await csvparse(items, {
 		columns: false,
 		relax: true,
 		relaxColumnCount: true,
 		skipLinesWithEmptyValues: true,
-	})) as Array<string[]>) {
+	});
+
+	for (const output of parsed) {
 		if (output.length == 1) {
 			res.push(output[0]);
 			continue;

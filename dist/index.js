@@ -178,19 +178,20 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.imageName = exports.getInputList = void 0;
 const core = __nccwpck_require__(2186);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const csvparse = __nccwpck_require__(2830);
+const csvparse = __nccwpck_require__(8750);
 async function getInputList(name, ignoreComma) {
     const res = [];
     const items = core.getInput(name);
-    if (items == "") {
+    if (items === "") {
         return res;
     }
-    for (const output of (await csvparse(items, {
+    const parsed = await csvparse(items, {
         columns: false,
         relax: true,
         relaxColumnCount: true,
         skipLinesWithEmptyValues: true,
-    }))) {
+    });
+    for (const output of parsed) {
         if (output.length == 1) {
             res.push(output[0]);
             continue;
@@ -9135,6 +9136,38 @@ const normalizeColumnsArray = function(columns){
     }
   }
   return normalizedColumns;
+}
+
+
+/***/ }),
+
+/***/ 8750:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+
+const parse = __nccwpck_require__(2830)
+
+module.exports = function(data, options={}){
+  if(typeof data === 'string'){
+    data = Buffer.from(data)
+  }
+  const records = options && options.objname ? {} : []
+  const parser = new parse.Parser(options)
+  parser.push = function(record){
+    if(record === null){
+      return
+    }
+    if(options.objname === undefined)
+      records.push(record)
+    else{
+      records[record[0]] = record[1]
+    }
+  }
+  const err1 = parser.__parse(data, false)
+  if(err1 !== undefined) throw err1
+  const err2 = parser.__parse(undefined, true)
+  if(err2 !== undefined) throw err2
+  return records
 }
 
 
